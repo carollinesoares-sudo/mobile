@@ -70,4 +70,13 @@
        -limpa o cache do build(apaga o apk anterior)
     - flutter run -v
        - build do app(apk)9
+- instalação de depêndencias do PubSpec()
+     - instalação
+         - flutter pub add nome_dependencia
+    - baixar e instalar depêndencias projetadas
+        - flutter pub get
+    - outros comando do flutter pub(depêndencias)
+       - flutter pub outdated (verifica se as depêndencias estão desatualizadas)
+       - flutter pub upgrade (Atualiza as dependências do flutter pub)
+       
 

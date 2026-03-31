@@ -1,70 +1,113 @@
-// tela para estudo dos widgets de exibição
-//  text, image, icon entre outros
-
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(
-    MaterialApp(
-      //configurações iniciais do App
-      //router => rotas de navegação
-      //home => pagina Inicial
-      home: MyApp(),
-      //themeApp => (Claro/Escuro)
-    ),
-  ); //gosto de colocar o MaterialApp no void main
+void main(List<String> args) {
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: ToDoList(),
+  ));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+// Classe modelo da tarefa
+class Tarefa {
+  String titulo;
+  bool concluida;
 
-  // estrutura da tela
+  Tarefa(this.titulo, {this.concluida = false});
+}
+
+// Widget principal
+class ToDoList extends StatefulWidget {
+  const ToDoList({super.key});
+
+  @override
+  State<ToDoList> createState() => _ToDoListState();
+}
+
+class _ToDoListState extends State<ToDoList> {
+  final TextEditingController _tarefaController = TextEditingController();
+  final List<Tarefa> _tarefas = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //elemento principal da tela
-      //appbar, drawer, bnBar, body, fabutton, snakebar
-      appBar: AppBar(title: Text("Exemplos de Widget de Exibição")),
-
-      //adicionar um elemento de Scroll
-
-      body: SingleChildScrollView(
-        //+ usado para scroll de Tela Inteira
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          //Widget de Text
-          //adicionar um container
-        
-          child: Expanded(
-            //+ usado para Scroll de Parte da Tela
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "Explorando o Flutter",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                ),
-                //dentro da column
-                //adicionar uma image
-                Image.network(
-                  //Link URL daImagem
-                  "https://images.unsplash.com/photo-1531259683007-016a7b628fc3",
-                  height: 600,
-                  fit: BoxFit.contain,),
-                //adicionar imagem local
-                Image.asset("assets/img/lego_batman.jpg",
-                  height: 250,
-                  fit: BoxFit.cover,)
-                    
-              ],
+      appBar: AppBar(
+        title: Text("Lista de Tarefas"),
+        centerTitle: true,
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(8),
+        child: Column(
+          children: [
+            TextField(
+              controller: _tarefaController,
+              decoration: InputDecoration(
+                labelText: "Digite uma tarefa",
+                border: OutlineInputBorder(),
+              ),
+              onSubmitted: (_) => _adicionarTarefa(),
             ),
-          ),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _adicionarTarefa,
+              child: Text("Adicionar Tarefa"),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _tarefas.length,
+                itemBuilder: (context, index) {
+                  final tarefa = _tarefas[index];
+
+                  return ListTile(
+                    title: Text(
+                      tarefa.titulo,
+                      style: TextStyle(
+                        decoration: tarefa.concluida
+                            ? TextDecoration.lineThrough
+                            : null,
+                      ),
+                    ),
+                    leading: Checkbox(
+                      value: tarefa.concluida,
+                      onChanged: (bool? valor) {
+                        setState(() {
+                          tarefa.concluida = valor!;
+                        });
+                      },
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      onPressed: () => _deletarTarefa(index),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
-
     );
   }
+
+  void _adicionarTarefa() {
+    if (_tarefaController.text.trim().isNotEmpty) {
+      setState(() {
+        _tarefas.add(Tarefa(_tarefaController.text.trim()));
+        _tarefaController.clear();
+      });
+
+      FocusScope.of(context).unfocus(); // fecha teclado
+    }
+  }
+
+  void _deletarTarefa(int index) {
+    setState(() {
+      _tarefas.removeAt(index);
+    });
+  }
+
+  @override
+  void dispose() {
+    _tarefaController.dispose();
+    super.dispose();
+  }
 }
- 

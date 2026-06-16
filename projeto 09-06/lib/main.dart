@@ -1,34 +1,34 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
-import 'theme_controller.dart'; // O controlador real já vem daqui!
+import 'theme_controller.dart'; // Importa o controlador de tema
 
 // Instância global única conectada com o arquivo correto
-final ThemeController themeController = ThemeController();
+final ThemeController themeController = ThemeController();// Instância global única do ThemeController
 
 void main() async {
   // 1. Garante que os plugins nativos (SharedPreferences) funcionem antes do runApp
   WidgetsFlutterBinding.ensureInitialized();
   
-  // 2. Força o carregamento do tema do SharedPreferences ANTES do app renderizar
-  await themeController.carregarTema();
+
+  await themeController.carregarTema(); // Carrega o tema salvo antes de iniciar a aplicação
   
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatelessWidget {// StatelessWidget porque o estado do tema é gerenciado pelo ThemeController
+  const MyApp({super.key});// Construtor padrão
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeController,
-      builder: (context, currentThemeMode, child) {
+      builder: (context, currentThemeMode, child) {// Rebuilda a aplicação toda vez que o tema mudar
         return MaterialApp(
           title: 'Todo List Sênior',
-          debugShowCheckedModeBanner: false,
+          debugShowCheckedModeBanner: false,// Remove a tag de debug
           themeMode: currentThemeMode,
 
-          // TEMA CLARO ☀️
+          // TEMA CLARO 
           theme: ThemeData(
             useMaterial3: true,
             brightness: Brightness.light,
@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
 
-          // TEMA ESCURO 🌙
+          // TEMA ESCURO 
           darkTheme: ThemeData(
             useMaterial3: true,
             brightness: Brightness.dark,

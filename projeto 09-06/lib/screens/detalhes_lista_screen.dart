@@ -7,7 +7,7 @@ import 'nova_tarefa_screen.dart';
 class DetalhesListaScreen extends StatefulWidget {
   final int listaId;
   final String listaNome;
-  final ListaModel lista;
+  final ListaModel lista;// Adiciona o modelo completo da lista para passar para a nova tarefa  
 
   const DetalhesListaScreen({
     super.key,
@@ -30,7 +30,7 @@ class _DetalhesListaScreenState extends State<DetalhesListaScreen> {
     _carregarTarefas();
   }
 
-  Future<void> _carregarTarefas() async {
+  Future<void> _carregarTarefas() async {// Carrega as tarefas da lista do banco de dados
     setState(() => _carregando = true);
     final dados = await DatabaseHelper.instance.readTarefasPorLista(widget.listaId);
     setState(() {
@@ -49,12 +49,12 @@ class _DetalhesListaScreenState extends State<DetalhesListaScreen> {
       prioridade: tarefa.prioridade,
       feita: !tarefa.feita,
     );
-    await DatabaseHelper.instance.updateTarefa(tarefaAtualizada);
+    await DatabaseHelper.instance.updateTarefa(tarefaAtualizada);// Atualiza o status da tarefa no banco de dados
     _carregarTarefas();
   }
 
   Future<void> _deletarTarefa(int id) async {
-    await DatabaseHelper.instance.deleteTarefa(id);
+    await DatabaseHelper.instance.deleteTarefa(id);// Deleta a tarefa do banco de dados
     _carregarTarefas();
   }
 
@@ -105,23 +105,23 @@ class _DetalhesListaScreenState extends State<DetalhesListaScreen> {
         backgroundColor: const Color(0xFFFF7B93),
         child: const Icon(Icons.add, color: Colors.white),
         onPressed: () {
-          Navigator.push(
+          Navigator.push(  // Navega para a tela de nova tarefa, passando o ID da lista e um callback para salvar a nova tarefa
             context,
             MaterialPageRoute(
-              builder: (context) => NovaTarefaScreen(
+              builder: (context) => NovaTarefaScreen(// Passa o ID da lista para a nova tarefa
                 listaId: widget.listaId,
                 lista: widget.lista,
-                onSalvar: (titulo, descricao, data, prioridade) async {
+                onSalvar: (titulo, descricao, data, prioridade) async {// Callback que será chamado quando a nova tarefa for salva
                   final novaTarefa = TarefaModel(
                     listaId: widget.listaId,
                     titulo: titulo,
-                    descricao: descricao,
+                    descricao: descricao,// A descrição é opcional, então pode ser vazia
                     dataVencimento: data,
-                    prioridade: prioridade,
+                    prioridade: prioridade,// A nova tarefa começa como não feita
                     feita: false,
                   );
-                  await DatabaseHelper.instance.insertTarefa(novaTarefa);
-                  _carregarTarefas();
+                  await DatabaseHelper.instance.insertTarefa(novaTarefa);// Insere a nova tarefa no banco de dados
+                  _carregarTarefas();// Recarrega a lista de tarefas para mostrar a nova tarefa adicionada
                 },
               ),
             ),
